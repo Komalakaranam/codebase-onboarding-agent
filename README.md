@@ -59,8 +59,8 @@ Open **http://127.0.0.1:8000/docs** and try `POST /repos/index` with:
 ## Current progress
 
 - [x] **Step 1** — Clone GitHub repo + parse Python/JS files
-- [ ] Step 2 — Intelligent chunking refinements
-- [ ] Step 3 — Embeddings + ChromaDB
+- [x] **Step 3** — Embeddings (sentence-transformers) + ChromaDB storage
+- [ ] Step 2 — Intelligent chunking refinements (basic chunking done in step 1)
 - [ ] Step 4 — Question answering via Groq
 - [ ] Step 5 — Source references in answers
 - [ ] Step 6 — SQLite chat history

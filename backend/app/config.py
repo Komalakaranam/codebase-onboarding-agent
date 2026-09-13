@@ -30,6 +30,13 @@ class Settings(BaseSettings):
     # SQLite database file (used in step 6)
     database_url: str = f"sqlite:///{BACKEND_ROOT / 'onboarding_agent.db'}"
 
+    # ChromaDB persistent storage (step 3 — vector database for embeddings)
+    chroma_dir: Path = BACKEND_ROOT / "chroma_db"
+
+    # Local embedding model — free, runs on CPU, 384-dimensional vectors
+    embedding_model_name: str = "all-MiniLM-L6-v2"
+    embedding_batch_size: int = 64
+
     # File extensions we index in step 1
     supported_extensions: tuple[str, ...] = (".py", ".js", ".jsx", ".ts", ".tsx")
 
@@ -51,3 +58,4 @@ settings = Settings()
 
 # Ensure runtime folders exist
 settings.data_dir.mkdir(parents=True, exist_ok=True)
+settings.chroma_dir.mkdir(parents=True, exist_ok=True)

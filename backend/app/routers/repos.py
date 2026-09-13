@@ -1,8 +1,8 @@
 """
 Repository indexing endpoints.
 
-POST /repos/index — clone a GitHub repo and parse its source files.
-This is step 1 of the RAG pipeline (ingestion).
+POST /repos/index — clone a GitHub repo, parse source files, embed chunks,
+                    and store vectors in ChromaDB (steps 1 + 3 of RAG).
 """
 
 from __future__ import annotations
@@ -11,20 +11,19 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException
 
+from app.config import settings
 from app.models.schemas import (
     IndexRepoRequest,
     IndexRepoResponse,
     IndexStatus,
     ParsedChunkPreview,
 )
+from app.services.embeddings import embed_chunks
 from app.services.github import GitHubCloneError, clone_github_repo
 from app.services.parser import parse_repository
+from app.services.vector_store import get_stored_chunk_count, store_chunks
 
 router = APIRouter(prefix="/repos", tags=["repos"])
-
-# In-memory store for parsed repos until we add SQLite/Chroma in later steps.
-# Key = repo_id (owner__repo), value = full parse result metadata.
-_index_cache: dict[str, dict] = {}
 
 
 def _preview_content(content: str, limit: int = 200) -> str:
@@ -37,15 +36,17 @@ def _preview_content(content: str, limit: int = 200) -> str:
 @router.post("/index", response_model=IndexRepoResponse)
 def index_repository(request: IndexRepoRequest) -> IndexRepoResponse:
     """
-    Clone a public GitHub repository and parse Python/JS source files.
+    Full indexing pipeline for a public GitHub repository.
 
     Flow:
-      1. Validate & clone the repo to backend/data/
-      2. Walk the file tree and parse each supported file
-      3. Return a summary + preview of extracted code chunks
+      1. Clone repo → backend/data/
+      2. Parse Python/JS files into code chunks
+      3. Generate embeddings (sentence-transformers)
+      4. Store vectors + metadata in ChromaDB
     """
     repo_url = str(request.repo_url)
 
+    # --- Step 1: Clone ---
     try:
         local_path, owner, repo_name = clone_github_repo(repo_url)
     except GitHubCloneError as exc:
@@ -53,12 +54,23 @@ def index_repository(request: IndexRepoRequest) -> IndexRepoResponse:
 
     repo_id = f"{owner}__{repo_name}"
 
+    # --- Step 2: Parse ---
     try:
         chunks, files_scanned = parse_repository(local_path)
-    except Exception as exc:  # noqa: BLE001 — surface unexpected parse errors clearly
+    except Exception as exc:  # noqa: BLE001
         raise HTTPException(
             status_code=500,
             detail=f"Repository cloned but parsing failed: {exc}",
+        ) from exc
+
+    # --- Step 3: Embed + store in ChromaDB ---
+    try:
+        embeddings = embed_chunks(chunks)
+        chunks_embedded = store_chunks(repo_id, chunks, embeddings)
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500,
+            detail=f"Parsing succeeded but embedding/storage failed: {exc}",
         ) from exc
 
     indexed_at = datetime.now(timezone.utc)
@@ -72,10 +84,10 @@ def index_repository(request: IndexRepoRequest) -> IndexRepoResponse:
             end_line=chunk.end_line,
             content_preview=_preview_content(chunk.content),
         )
-        for chunk in chunks[:50]  # cap preview list so response stays readable
+        for chunk in chunks[:50]
     ]
 
-    response = IndexRepoResponse(
+    return IndexRepoResponse(
         repo_id=repo_id,
         repo_url=repo_url,
         repo_name=f"{owner}/{repo_name}",
@@ -83,34 +95,30 @@ def index_repository(request: IndexRepoRequest) -> IndexRepoResponse:
         status=IndexStatus.completed,
         files_scanned=files_scanned,
         chunks_found=len(chunks),
+        chunks_embedded=chunks_embedded,
+        embedding_model=settings.embedding_model_name,
         chunks=preview_chunks,
         indexed_at=indexed_at,
         message=(
-            f"Successfully indexed {files_scanned} files and extracted "
-            f"{len(chunks)} code chunks. Embedding step comes next."
+            f"Indexed {files_scanned} files → {len(chunks)} chunks → "
+            f"{chunks_embedded} embeddings stored in ChromaDB. "
+            f"Ready for Q&A (step 4)."
         ),
     )
-
-    # Cache full chunk list for later embedding step
-    _index_cache[repo_id] = {
-        "response": response,
-        "chunks": chunks,
-    }
-
-    return response
 
 
 @router.get("/{repo_id}/summary")
 def get_repo_summary(repo_id: str) -> dict:
-    """Quick lookup to see if a repo was already indexed in this server session."""
-    cached = _index_cache.get(repo_id)
-    if not cached:
-        raise HTTPException(status_code=404, detail="Repo not indexed in this session.")
-    resp: IndexRepoResponse = cached["response"]
+    """Check how many vectors are stored for a repo in ChromaDB."""
+    count = get_stored_chunk_count(repo_id)
+    if count == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Repo not found in vector store. Run POST /repos/index first.",
+        )
     return {
-        "repo_id": resp.repo_id,
-        "repo_name": resp.repo_name,
-        "files_scanned": resp.files_scanned,
-        "chunks_found": resp.chunks_found,
-        "indexed_at": resp.indexed_at,
+        "repo_id": repo_id,
+        "chunks_embedded": count,
+        "embedding_model": settings.embedding_model_name,
+        "vector_store": "chromadb",
     }

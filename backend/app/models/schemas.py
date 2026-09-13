@@ -16,6 +16,7 @@ class IndexStatus(str, Enum):
     pending = "pending"
     cloning = "cloning"
     parsing = "parsing"
+    embedding = "embedding"
     completed = "completed"
     failed = "failed"
 
@@ -46,7 +47,7 @@ class ParsedChunkPreview(BaseModel):
 
 
 class IndexRepoResponse(BaseModel):
-    """Returned after cloning + parsing a repository."""
+    """Returned after cloning, parsing, and embedding a repository."""
 
     repo_id: str
     repo_url: str
@@ -55,6 +56,8 @@ class IndexRepoResponse(BaseModel):
     status: IndexStatus
     files_scanned: int
     chunks_found: int
+    chunks_embedded: int
+    embedding_model: str
     chunks: list[ParsedChunkPreview]
     indexed_at: datetime
     message: str
