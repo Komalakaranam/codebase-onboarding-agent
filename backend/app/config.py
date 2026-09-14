@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     embedding_model_name: str = "all-MiniLM-L6-v2"
     embedding_batch_size: int = 64
 
+    # Groq LLM used for step 4 (Q&A generation over retrieved chunks)
+    groq_model_name: str = "llama-3.3-70b-versatile"
+    qa_top_k: int = 5
+
     # File extensions we index in step 1
     supported_extensions: tuple[str, ...] = (".py", ".js", ".jsx", ".ts", ".tsx")
 
