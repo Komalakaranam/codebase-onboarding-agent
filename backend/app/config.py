@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     embedding_batch_size: int = 64
 
     # Groq LLM used for step 4 (Q&A generation over retrieved chunks)
-    groq_model_name: str = "llama-3.3-70b-versatile"
+    groq_model_name: str = "openai/gpt-oss-20b"
     qa_top_k: int = 5
 
     # File extensions we index in step 1
