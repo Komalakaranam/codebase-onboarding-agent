@@ -128,6 +128,51 @@ def store_chunks(
     return len(chunks)
 
 
+def query_similar_chunks(
+    repo_id: str,
+    query_embedding: list[float],
+    top_k: int = 5,
+) -> list[dict]:
+    """
+    Semantic search: find the top_k stored chunks whose embeddings are
+    closest to query_embedding (i.e. closest in meaning to the question).
+
+    This is the "R" in RAG — Chroma does a nearest-neighbor search over
+    every vector in the collection and returns the closest matches,
+    ordered from most to least similar.
+
+    Returns a list of dicts (most similar first):
+        {"document": <source code>, "metadata": {...}, "relevance_score": 0-1}
+    """
+    collection = get_repo_collection(repo_id)
+    count = collection.count()
+    if count == 0:
+        return []
+
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=min(top_k, count),
+    )
+
+    documents = results["documents"][0]
+    metadatas = results["metadatas"][0]
+    distances = results["distances"][0]
+
+    chunks = []
+    for document, metadata, distance in zip(documents, metadatas, distances):
+        # Cosine distance ranges 0 (identical) to 2 (opposite). Flip it into
+        # an intuitive 0-1 "relevance" score for the API response.
+        relevance_score = max(0.0, 1.0 - (distance / 2.0))
+        chunks.append(
+            {
+                "document": document,
+                "metadata": metadata,
+                "relevance_score": round(relevance_score, 4),
+            }
+        )
+    return chunks
+
+
 def get_stored_chunk_count(repo_id: str) -> int:
     """How many vectors exist for this repo (0 if not indexed)."""
     try:

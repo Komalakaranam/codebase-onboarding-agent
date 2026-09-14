@@ -63,6 +63,47 @@ class IndexRepoResponse(BaseModel):
     message: str
 
 
+class AskQuestionRequest(BaseModel):
+    """Body sent when a user asks a natural-language question about a repo."""
+
+    question: str = Field(
+        ...,
+        min_length=3,
+        description="Natural-language question about the indexed codebase.",
+        examples=["How does user authentication work in this repo?"],
+    )
+    top_k: int = Field(
+        default=5,
+        ge=1,
+        le=20,
+        description="How many code chunks to retrieve from ChromaDB as context.",
+    )
+
+
+class SourceReference(BaseModel):
+    """Points back to the exact code the answer was generated from."""
+
+    file_path: str
+    chunk_type: str  # "function", "class", "method", "module"
+    name: str | None = None
+    start_line: int
+    end_line: int
+    relevance_score: float = Field(
+        ..., description="0-1 similarity score from ChromaDB; higher = more relevant."
+    )
+
+
+class AskQuestionResponse(BaseModel):
+    """Returned after retrieval (ChromaDB) + generation (Groq LLM)."""
+
+    repo_id: str
+    question: str
+    answer: str
+    sources: list[SourceReference]
+    model: str
+    chunks_retrieved: int
+
+
 class HealthResponse(BaseModel):
     status: str
     version: str
