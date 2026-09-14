@@ -104,6 +104,26 @@ class AskQuestionResponse(BaseModel):
     chunks_retrieved: int
 
 
+class ChatHistoryEntry(BaseModel):
+    """One saved Q&A pair, as stored in the SQLite chat_history table."""
+
+    model_config = {"from_attributes": True}
+
+    id: int
+    repo_id: str
+    question: str
+    answer: str
+    created_at: datetime
+
+
+class ChatHistoryResponse(BaseModel):
+    """Returned by GET /repos/{repo_id}/history."""
+
+    repo_id: str
+    count: int
+    history: list[ChatHistoryEntry]
+
+
 class HealthResponse(BaseModel):
     status: str
     version: str
