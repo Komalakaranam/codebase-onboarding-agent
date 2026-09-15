@@ -404,13 +404,14 @@ input:focus-visible {
 .answer-card {
   align-self: flex-start;
   max-width: 100%;
+  min-width: 0;
   padding: 14px 16px;
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   font-size: var(--text-base);
   line-height: 1.55;
-  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .answer-card.pending {
@@ -432,6 +433,101 @@ input:focus-visible {
 .answer-card.is-error svg {
   flex-shrink: 0;
   margin-top: 2px;
+}
+
+/* ---------- Markdown answers ---------- */
+
+.markdown {
+  min-width: 0;
+}
+
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown p {
+  margin: 0 0 12px;
+}
+
+.markdown strong {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  margin: 18px 0 8px;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-accent);
+  line-height: 1.35;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.markdown li {
+  margin-bottom: 6px;
+}
+
+.markdown li:last-child {
+  margin-bottom: 0;
+}
+
+.markdown li > ul,
+.markdown li > ol {
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+.markdown code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 1px 5px;
+  overflow-wrap: anywhere;
+}
+
+.markdown pre {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.markdown pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.82rem;
+  white-space: pre;
+}
+
+.markdown a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.markdown blockquote {
+  margin: 0 0 12px;
+  padding-left: 12px;
+  border-left: 2px solid var(--color-border);
+  color: var(--color-text-secondary);
 }
 
 .sources {
@@ -575,6 +671,13 @@ input:focus-visible {
 
   .chat-form {
     flex-direction: column;
+  }
+
+  .chat-form .text-input {
+    /* Reset the row-oriented flex-basis (260px) — in a column flex
+       container that basis applies to height, not width, which
+       inflated the input to 260px tall. */
+    flex: 1 1 auto;
   }
 
   .chat-form .btn {
