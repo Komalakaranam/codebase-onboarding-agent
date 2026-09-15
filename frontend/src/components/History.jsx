@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { getHistory } from "../api";
 import { formatUtcTimestamp } from "../utils";
 import { ErrorIcon } from "./StatusIcons";
@@ -66,7 +67,9 @@ export default function History({ repoId, repoName }) {
               {formatUtcTimestamp(entry.created_at)}
             </div>
             <div className="history-question">Q: {entry.question}</div>
-            <div className="history-answer">A: {entry.answer}</div>
+            <div className="history-answer markdown">
+              <ReactMarkdown>{entry.answer}</ReactMarkdown>
+            </div>
           </li>
         ))}
       </ul>

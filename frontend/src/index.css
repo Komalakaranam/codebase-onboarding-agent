@@ -643,7 +643,7 @@ input:focus-visible {
 .history-answer {
   font-size: var(--text-base);
   color: var(--color-text-secondary);
-  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- Responsive ---------- */
