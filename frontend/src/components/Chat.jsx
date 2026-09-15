@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { askQuestion } from "../api";
 import SourceList from "./SourceList";
 import { ErrorIcon } from "./StatusIcons";
@@ -78,8 +79,16 @@ export default function Chat({ repoId, repoName }) {
           <div key={message.id} className="chat-message">
             <div className="bubble-question">{message.question}</div>
             <div className={"answer-card" + (message.isError ? " is-error" : "")}>
-              {message.isError && <ErrorIcon />}
-              <span>{message.answer}</span>
+              {message.isError ? (
+                <>
+                  <ErrorIcon />
+                  <span>{message.answer}</span>
+                </>
+              ) : (
+                <div className="markdown">
+                  <ReactMarkdown>{message.answer}</ReactMarkdown>
+                </div>
+              )}
               {!message.isError && <SourceList sources={message.sources} />}
             </div>
           </div>
