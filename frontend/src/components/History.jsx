@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getHistory } from "../api";
 import { formatUtcTimestamp } from "../utils";
+import { ErrorIcon } from "./StatusIcons";
 
 /**
  * Step 3 of the UI: past Q&A pairs for the current repo, most recent
@@ -47,7 +48,12 @@ export default function History({ repoId, repoName }) {
         </button>
       </div>
 
-      {error && <div className="error-box">{error}</div>}
+      {error && (
+        <div className="status-box error">
+          <ErrorIcon />
+          <span>{error}</span>
+        </div>
+      )}
 
       {!loading && !error && entries.length === 0 && (
         <p className="muted">No questions asked yet — try the Chat tab.</p>

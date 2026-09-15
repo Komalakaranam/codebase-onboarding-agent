@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { askQuestion } from "../api";
 import SourceList from "./SourceList";
+import { ErrorIcon } from "./StatusIcons";
 
 /**
  * Step 2 of the UI: a chat-style Q&A view for one indexed repo.
@@ -75,13 +76,10 @@ export default function Chat({ repoId, repoName }) {
 
         {messages.map((message) => (
           <div key={message.id} className="chat-message">
-            <div className="bubble bubble-question">{message.question}</div>
-            <div
-              className={
-                "bubble bubble-answer" + (message.isError ? " is-error" : "")
-              }
-            >
-              {message.answer}
+            <div className="bubble-question">{message.question}</div>
+            <div className={"answer-card" + (message.isError ? " is-error" : "")}>
+              {message.isError && <ErrorIcon />}
+              <span>{message.answer}</span>
               {!message.isError && <SourceList sources={message.sources} />}
             </div>
           </div>
@@ -89,7 +87,7 @@ export default function Chat({ repoId, repoName }) {
 
         {loading && (
           <div className="chat-message">
-            <div className="bubble bubble-answer pending">Thinking…</div>
+            <div className="answer-card pending">Thinking…</div>
           </div>
         )}
       </div>

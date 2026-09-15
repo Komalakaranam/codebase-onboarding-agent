@@ -7,18 +7,16 @@ export default function SourceList({ sources }) {
       <div className="sources-title">Sources</div>
       <ul className="source-list">
         {sources.map((source, index) => (
-          <li key={index} className="source-item">
+          <li key={index} className="source-chip">
             <code className="source-path">
               {source.file_path}:{source.start_line}-{source.end_line}
             </code>
             {source.name && (
               <span className="source-symbol">
-                {source.chunk_type} <code>{source.name}</code>
+                <code>{source.name}</code>
               </span>
             )}
-            <span className="source-score">
-              relevance {Math.round(source.relevance_score * 100)}%
-            </span>
+            <span className="source-score">{Math.round(source.relevance_score * 100)}%</span>
           </li>
         ))}
       </ul>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import RepoInput from "./components/RepoInput";
 import Chat from "./components/Chat";
 import History from "./components/History";
+import Logo from "./components/Logo";
 
 /**
  * Top-level layout: a tab bar over one of three views. `repo` holds the
@@ -22,12 +23,13 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <h1 className="app-title">
-          Codebase Onboarding Agent
-          <span className="app-subtitle">
-            {repo ? `Current repo: ${repo.repoName}` : "Ask questions about any GitHub codebase"}
-          </span>
-        </h1>
+        <div className="brand">
+          <Logo />
+          <div className="brand-text">
+            <span className="brand-name">Codebase Onboarding Agent</span>
+            {repo && <span className="brand-context">{repo.repoName}</span>}
+          </div>
+        </div>
 
         <nav className="tab-nav">
           <button

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { indexRepo } from "../api";
+import { CheckIcon, ErrorIcon } from "./StatusIcons";
 
 /**
  * Step 1 of the UI: paste a GitHub URL, trigger POST /repos/index,
@@ -64,12 +65,18 @@ export default function RepoInput({ onIndexed }) {
         </div>
       )}
 
-      {status === "error" && <div className="error-box">{errorMessage}</div>}
+      {status === "error" && (
+        <div className="status-box error">
+          <ErrorIcon />
+          <span>{errorMessage}</span>
+        </div>
+      )}
 
       {status === "success" && result && (
         <div className="success-panel">
-          <p>
-            ✅ Indexed <strong>{result.repo_name}</strong> successfully.
+          <p className="success-message">
+            <CheckIcon />
+            Indexed {result.repo_name} successfully
           </p>
           <div className="stat-grid">
             <div className="stat-tile">
