@@ -134,6 +134,14 @@ class RepoOverviewResponse(BaseModel):
     description: str
 
 
+class OnboardingGuideResponse(BaseModel):
+    """Returned by POST /repos/{repo_id}/onboarding-guide."""
+
+    repo_id: str
+    guide_markdown: str
+    generated_at: datetime
+
+
 class HealthResponse(BaseModel):
     status: str
     version: str
