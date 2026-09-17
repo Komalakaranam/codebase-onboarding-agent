@@ -155,6 +155,7 @@ input:focus-visible {
   border-radius: 0 var(--radius) var(--radius) 0;
   cursor: pointer;
   text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .sidebar-nav-item svg {
@@ -208,6 +209,21 @@ input:focus-visible {
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding: 32px 24px 64px;
+}
+
+@keyframes tab-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-fade {
+  animation: tab-fade-in 0.18s ease-out;
 }
 
 /* ---------- Cards ---------- */
@@ -305,11 +321,13 @@ input:focus-visible {
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
 .btn:hover:not(:disabled) {
   background: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
+  transform: translateY(-1px);
 }
 
 .btn:disabled {
@@ -321,11 +339,13 @@ input:focus-visible {
   background: transparent;
   color: var(--color-text-secondary);
   border: 1px solid var(--color-border);
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .btn-secondary:hover:not(:disabled) {
   border-color: var(--color-border-strong);
   color: var(--color-text);
+  transform: translateY(-1px);
 }
 
 /* ---------- Status: loading / error / success ---------- */
@@ -337,6 +357,68 @@ input:focus-visible {
   display: flex;
   align-items: flex-start;
   gap: 8px;
+}
+
+/* ---------- Loading skeletons ---------- */
+
+.skeleton {
+  display: block;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.skeleton-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.skeleton-line {
+  height: 11px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.skeleton-line:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-line-title {
+  width: 130px;
+  margin-bottom: 12px;
+}
+
+.skeleton-line-short {
+  width: 55%;
+}
+
+.stat-tile .skeleton-value {
+  height: 19px;
+  width: 46%;
+  margin: 0 auto 8px;
+}
+
+.stat-tile .skeleton-label {
+  height: 10px;
+  width: 60%;
+  margin: 0 auto;
+}
+
+.skeleton-donut {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 /* ---------- Indexing progress checklist ---------- */
@@ -466,6 +548,12 @@ input:focus-visible {
   border-radius: var(--radius);
   padding: 12px;
   text-align: center;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.stat-tile:hover {
+  border-color: var(--color-border-strong);
+  transform: translateY(-1px);
 }
 
 .stat-tile .stat-value {
@@ -495,6 +583,11 @@ input:focus-visible {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   background: var(--color-bg);
+  transition: border-color 0.15s ease;
+}
+
+.info-card:hover {
+  border-color: var(--color-border-strong);
 }
 
 .spaced-top {
@@ -879,6 +972,14 @@ input:focus-visible {
   border-bottom: none;
 }
 
+.eval-table tbody tr {
+  transition: background 0.12s ease;
+}
+
+.eval-table tbody tr:hover {
+  background: var(--color-bg);
+}
+
 .eval-retrieved-path {
   display: block;
   margin-bottom: 4px;
@@ -1054,5 +1155,16 @@ input:focus-visible {
 
   .bar-chart-label {
     font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-fade,
+  .skeleton,
+  .btn,
+  .btn-secondary,
+  .stat-tile {
+    animation: none;
+    transition: none;
   }
 }

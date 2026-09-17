@@ -49,9 +49,39 @@ export default function Overview({ repoId, repoName }) {
       <p className="muted">{repoName}</p>
 
       {loading && (
-        <div className="loading-note">
-          <span className="spinner" />
-          Gathering stats and summarizing the project…
+        <div className="skeleton-group" role="status" aria-label="Loading overview">
+          <div className="stat-grid">
+            <div className="stat-tile">
+              <span className="skeleton skeleton-value" />
+              <span className="skeleton skeleton-label" />
+            </div>
+            <div className="stat-tile">
+              <span className="skeleton skeleton-value" />
+              <span className="skeleton skeleton-label" />
+            </div>
+            <div className="stat-tile">
+              <span className="skeleton skeleton-value" />
+              <span className="skeleton skeleton-label" />
+            </div>
+          </div>
+
+          <div className="info-card">
+            <span className="skeleton skeleton-line skeleton-line-title" />
+            <div className="chart-card">
+              <span className="skeleton skeleton-donut" />
+              <div className="chart-legend">
+                <span className="skeleton skeleton-line" style={{ width: "90px" }} />
+                <span className="skeleton skeleton-line" style={{ width: "70px" }} />
+              </div>
+            </div>
+          </div>
+
+          <div className="info-card">
+            <span className="skeleton skeleton-line skeleton-line-title" />
+            <span className="skeleton skeleton-line" />
+            <span className="skeleton skeleton-line" />
+            <span className="skeleton skeleton-line skeleton-line-short" />
+          </div>
         </div>
       )}
 
