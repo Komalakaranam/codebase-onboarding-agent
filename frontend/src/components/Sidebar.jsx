@@ -1,20 +1,20 @@
 import Logo from "./Logo";
 import {
+  IndexIcon,
   OverviewIcon,
   ChatIcon,
   HistoryIcon,
-  SettingsIcon,
   OnboardingIcon,
   EvaluationIcon,
 } from "./NavIcons";
 
 const NAV_ITEMS = [
+  { id: "index", label: "Index Repo", Icon: IndexIcon, requiresRepo: false },
   { id: "overview", label: "Overview", Icon: OverviewIcon, requiresRepo: true },
   { id: "chat", label: "Ask AI", Icon: ChatIcon, requiresRepo: true },
   { id: "history", label: "History", Icon: HistoryIcon, requiresRepo: true },
   { id: "onboarding", label: "Onboarding", Icon: OnboardingIcon, requiresRepo: true },
   { id: "evaluation", label: "Evaluation", Icon: EvaluationIcon, requiresRepo: true },
-  { id: "settings", label: "Settings", Icon: SettingsIcon, requiresRepo: false },
 ];
 
 export default function Sidebar({ activeTab, onSelectTab, repo }) {
