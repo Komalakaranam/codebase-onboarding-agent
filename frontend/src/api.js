@@ -56,3 +56,8 @@ export function askQuestion(repoId, question, topK = 5) {
 export function getHistory(repoId, limit = 50) {
   return request(`/repos/${encodeURIComponent(repoId)}/history?limit=${limit}`);
 }
+
+/** GET /repos/{repo_id}/overview — stats + languages + LLM project summary. */
+export function getOverview(repoId) {
+  return request(`/repos/${encodeURIComponent(repoId)}/overview`);
+}
