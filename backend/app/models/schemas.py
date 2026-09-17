@@ -142,6 +142,39 @@ class OnboardingGuideResponse(BaseModel):
     generated_at: datetime
 
 
+class EvalQuestion(BaseModel):
+    """One test case: a question plus the source file the answer should cite."""
+
+    question: str = Field(..., min_length=3)
+    expected_source: str = Field(
+        ..., min_length=1, description="Substring to look for in the retrieved file paths."
+    )
+
+
+class EvalRequest(BaseModel):
+    """Body sent to POST /repos/{repo_id}/evaluate."""
+
+    questions: list[EvalQuestion] = Field(..., min_length=1)
+
+
+class EvalQuestionResult(BaseModel):
+    question: str
+    expected_source: str
+    retrieved_sources: list[str]
+    correct: bool
+    response_time_ms: int
+
+
+class EvalResponse(BaseModel):
+    """Returned by POST /repos/{repo_id}/evaluate."""
+
+    repo_id: str
+    results: list[EvalQuestionResult]
+    total_questions: int
+    accuracy_percent: float
+    avg_response_time_ms: float
+
+
 class HealthResponse(BaseModel):
     status: str
     version: str

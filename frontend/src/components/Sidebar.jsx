@@ -5,6 +5,7 @@ import {
   HistoryIcon,
   SettingsIcon,
   OnboardingIcon,
+  EvaluationIcon,
 } from "./NavIcons";
 
 const NAV_ITEMS = [
@@ -12,6 +13,7 @@ const NAV_ITEMS = [
   { id: "chat", label: "Ask AI", Icon: ChatIcon, requiresRepo: true },
   { id: "history", label: "History", Icon: HistoryIcon, requiresRepo: true },
   { id: "onboarding", label: "Onboarding", Icon: OnboardingIcon, requiresRepo: true },
+  { id: "evaluation", label: "Evaluation", Icon: EvaluationIcon, requiresRepo: true },
   { id: "settings", label: "Settings", Icon: SettingsIcon, requiresRepo: false },
 ];
 
