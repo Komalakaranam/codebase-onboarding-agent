@@ -150,7 +150,15 @@ class EvalQuestion(BaseModel):
 
     question: str = Field(..., min_length=3)
     expected_source: str = Field(
-        ..., min_length=1, description="Substring to look for in the retrieved file paths."
+        ...,
+        min_length=1,
+        description=(
+            "File path (or trailing path segments, e.g. 'services/qa.py') "
+            "expected among the retrieved sources. Matched on whole path "
+            "segments, not raw substring — a bare filename like 'qa.py' "
+            "still matches any directory containing that file, so include "
+            "enough of the path to disambiguate same-named files."
+        ),
     )
 
 
@@ -164,7 +172,12 @@ class EvalQuestionResult(BaseModel):
     question: str
     expected_source: str
     retrieved_sources: list[str]
-    correct: bool
+    correct_top1: bool = Field(
+        ..., description="Whether expected_source matched retrieved_sources[0] specifically."
+    )
+    correct_top5: bool = Field(
+        ..., description="Whether expected_source matched anywhere in retrieved_sources."
+    )
     response_time_ms: int
 
 
@@ -174,7 +187,12 @@ class EvalResponse(BaseModel):
     repo_id: str
     results: list[EvalQuestionResult]
     total_questions: int
-    accuracy_percent: float
+    top1_accuracy_percent: float = Field(
+        ..., description="Percent of questions where the expected source was ranked first."
+    )
+    top5_accuracy_percent: float = Field(
+        ..., description="Percent of questions where the expected source appeared anywhere in the top-k."
+    )
     avg_response_time_ms: float
 
 

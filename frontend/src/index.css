@@ -1229,11 +1229,15 @@ input:focus-visible {
   }
 
   .bar-chart-row {
-    grid-template-columns: 72px 1fr 48px;
+    grid-template-columns: 92px 1fr 40px;
     gap: 6px;
   }
 
   .bar-chart-label {
+    font-size: 11px;
+  }
+
+  .bar-chart-value {
     font-size: 11px;
   }
 }
