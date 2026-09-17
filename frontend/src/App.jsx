@@ -4,6 +4,7 @@ import RepoInput from "./components/RepoInput";
 import Overview from "./components/Overview";
 import Chat from "./components/Chat";
 import History from "./components/History";
+import Onboarding from "./components/Onboarding";
 
 /**
  * Layout: a fixed sidebar (nav + branding) beside a scrollable main
@@ -39,6 +40,10 @@ export default function App() {
 
           {activeTab === "history" && repo && (
             <History key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
+          )}
+
+          {activeTab === "onboarding" && repo && (
+            <Onboarding key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
           )}
         </div>
       </main>

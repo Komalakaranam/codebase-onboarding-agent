@@ -61,3 +61,10 @@ export function getHistory(repoId, limit = 50) {
 export function getOverview(repoId) {
   return request(`/repos/${encodeURIComponent(repoId)}/overview`);
 }
+
+/** POST /repos/{repo_id}/onboarding-guide — LLM-generated Markdown onboarding doc. */
+export function generateOnboardingGuide(repoId) {
+  return request(`/repos/${encodeURIComponent(repoId)}/onboarding-guide`, {
+    method: "POST",
+  });
+}

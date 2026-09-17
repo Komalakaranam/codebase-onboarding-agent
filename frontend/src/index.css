@@ -459,11 +459,15 @@ input:focus-visible {
 /* ---------- Overview ---------- */
 
 .info-card {
-  margin-top: 4px;
+  margin-top: 16px;
   padding: 16px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   background: var(--color-bg);
+}
+
+.spaced-top {
+  margin-top: 16px;
 }
 
 .info-card-title {
