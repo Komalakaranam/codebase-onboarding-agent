@@ -23,10 +23,20 @@
   --color-error-border: #fecaca;
   --color-error-text: #b91c1c;
 
+  /* Chart categorical series — validated with the dataviz skill's
+     validator (node scripts/validate_palette.js) for CVD-safe
+     adjacent separation. Assigned by language identity in JS, not by
+     position, so a language keeps its color across repos with
+     different language sets. */
+  --chart-series-1: #2563eb; /* JavaScript — same hue as the accent */
+  --chart-series-2: #d97706; /* Python */
+  --chart-series-3: #db2777; /* TypeScript */
+
   /* Type scale: 3 sizes only, hierarchy comes from weight */
   --text-sm: 0.8125rem;   /* 13px — labels, timestamps, muted text */
   --text-base: 0.9375rem; /* 15px — body */
   --text-lg: 1.1875rem;   /* 19px — headings */
+  --text-xl: 1.625rem;    /* 26px — welcome headline only, nowhere else */
 
   /* Modest corners */
   --radius-sm: 4px;
@@ -227,6 +237,27 @@ input:focus-visible {
 
 .card > p.muted {
   margin-top: 0;
+}
+
+/* ---------- Welcome (Index Repo landing view) ---------- */
+
+.welcome-intro {
+  margin-bottom: 12px;
+}
+
+.welcome-headline {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+  color: var(--color-text);
+}
+
+.welcome-tagline {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  margin: 0;
+  max-width: 520px;
 }
 
 /* ---------- Form controls ---------- */
@@ -475,6 +506,111 @@ input:focus-visible {
   font-weight: 600;
   color: var(--color-muted);
   margin-bottom: 8px;
+}
+
+.chart-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.donut-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-center-value {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.donut-center-label {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 140px;
+}
+
+.chart-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.chart-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.chart-legend-value {
+  color: var(--color-muted);
+  margin-left: auto;
+  padding-left: 12px;
+}
+
+/* ---------- Bar chart (Evaluation) ---------- */
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bar-chart-row {
+  display: grid;
+  grid-template-columns: 96px 1fr 56px;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-chart-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-chart-track {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  height: 16px;
+  overflow: hidden;
+}
+
+.bar-chart-fill {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width 0.3s ease;
+}
+
+.bar-chart-value {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  text-align: right;
+  white-space: nowrap;
 }
 
 /* ---------- Chat ---------- */
@@ -899,5 +1035,24 @@ input:focus-visible {
 
   .stat-tile {
     padding: 8px 4px;
+  }
+
+  .chart-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .chart-legend {
+    width: 100%;
+  }
+
+  .bar-chart-row {
+    grid-template-columns: 72px 1fr 48px;
+    gap: 6px;
+  }
+
+  .bar-chart-label {
+    font-size: 11px;
   }
 }

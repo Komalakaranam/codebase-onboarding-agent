@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { runEvaluation } from "../api";
 import { ErrorIcon } from "./StatusIcons";
+import BarChart from "./BarChart";
 
 const PLACEHOLDER = `How does retrieval find the right chunks? | app/services/vector_store.py
 What does the /ask endpoint do? | app/routers/qa.py`;
@@ -99,6 +100,36 @@ export default function Evaluation({ repoId, repoName }) {
               <span className="stat-value">{Math.round(result.avg_response_time_ms)}ms</span>
               <span className="stat-label">Avg Response Time</span>
             </div>
+          </div>
+
+          <div className="info-card spaced-top">
+            <div className="info-card-title">Response Time per Question</div>
+            <BarChart
+              data={result.results.map((row, i) => ({
+                label: `Q${i + 1}`,
+                value: row.response_time_ms,
+                color: "var(--color-accent)",
+              }))}
+              valueFormatter={(v) => `${v}ms`}
+            />
+          </div>
+
+          <div className="info-card spaced-top">
+            <div className="info-card-title">Correct vs Incorrect</div>
+            <BarChart
+              data={[
+                {
+                  label: "Correct",
+                  value: result.results.filter((row) => row.correct).length,
+                  color: "var(--color-success-text)",
+                },
+                {
+                  label: "Incorrect",
+                  value: result.results.filter((row) => !row.correct).length,
+                  color: "var(--color-error-text)",
+                },
+              ]}
+            />
           </div>
 
           <div className="table-wrap spaced-top">

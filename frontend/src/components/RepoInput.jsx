@@ -78,11 +78,17 @@ export default function RepoInput({ onIndexed }) {
 
   return (
     <section className="card">
-      <h2>Index a GitHub Repository</h2>
+      <div className="welcome-intro">
+        <h1 className="welcome-headline">Understand any codebase instantly</h1>
+        <p className="welcome-tagline">
+          Paste a GitHub repo URL below and start asking questions about it in
+          plain English.
+        </p>
+      </div>
+
       <p className="muted">
-        Paste a public GitHub repo URL. The backend clones it, parses
-        Python/JS files into chunks, embeds them, and stores the vectors in
-        ChromaDB.
+        The backend clones the repo, parses Python/JS files into chunks,
+        embeds them, and stores the vectors in ChromaDB.
       </p>
 
       <form onSubmit={handleSubmit} className="field-row">
