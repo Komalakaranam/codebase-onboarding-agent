@@ -10,13 +10,14 @@ import Evaluation from "./components/Evaluation";
 /**
  * Layout: a fixed sidebar (nav + branding) beside a scrollable main
  * content area. `repo` holds the currently indexed repo; Overview/Chat/
- * History are disabled in the sidebar until it's set. Settings always
- * holds the repo-indexing form, so switching repos is just "go to
- * Settings and index a new URL" rather than a separate first-run screen.
+ * History/Onboarding/Evaluation are disabled in the sidebar until it's
+ * set. "Index Repo" always holds the indexing form (own dedicated tab,
+ * not a settings/config concern), so indexing a different repo later is
+ * just "go back to Index Repo and paste a new URL."
  */
 export default function App() {
   const [repo, setRepo] = useState(null);
-  const [activeTab, setActiveTab] = useState("settings");
+  const [activeTab, setActiveTab] = useState("index");
 
   function handleIndexed(repoInfo) {
     setRepo(repoInfo);
@@ -29,7 +30,7 @@ export default function App() {
 
       <main className="main-content">
         <div className="content-inner">
-          {activeTab === "settings" && <RepoInput onIndexed={handleIndexed} />}
+          {activeTab === "index" && <RepoInput onIndexed={handleIndexed} />}
 
           {activeTab === "overview" && repo && (
             <Overview key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
