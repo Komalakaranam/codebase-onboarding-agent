@@ -30,27 +30,32 @@ export default function App() {
 
       <main className="main-content">
         <div className="content-inner">
-          {activeTab === "index" && <RepoInput onIndexed={handleIndexed} />}
+          {/* Keyed by activeTab so switching sidebar tabs remounts this
+              wrapper and replays the fade-in — a subtle transition
+              instead of an instant content swap. */}
+          <div key={activeTab} className="tab-fade">
+            {activeTab === "index" && <RepoInput onIndexed={handleIndexed} />}
 
-          {activeTab === "overview" && repo && (
-            <Overview key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
-          )}
+            {activeTab === "overview" && repo && (
+              <Overview key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
+            )}
 
-          {activeTab === "chat" && repo && (
-            <Chat key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
-          )}
+            {activeTab === "chat" && repo && (
+              <Chat key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
+            )}
 
-          {activeTab === "history" && repo && (
-            <History key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
-          )}
+            {activeTab === "history" && repo && (
+              <History key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
+            )}
 
-          {activeTab === "onboarding" && repo && (
-            <Onboarding key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
-          )}
+            {activeTab === "onboarding" && repo && (
+              <Onboarding key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
+            )}
 
-          {activeTab === "evaluation" && repo && (
-            <Evaluation key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
-          )}
+            {activeTab === "evaluation" && repo && (
+              <Evaluation key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
+            )}
+          </div>
         </div>
       </main>
     </div>

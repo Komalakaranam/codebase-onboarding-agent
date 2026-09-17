@@ -60,8 +60,20 @@ export default function History({ repoId, repoName }) {
         <p className="muted">No questions asked yet — try the Chat tab.</p>
       )}
 
+      {loading && (
+        <ul className="history-list" role="status" aria-label="Loading history">
+          {[0, 1, 2].map((i) => (
+            <li className="history-item" key={i}>
+              <span className="skeleton skeleton-line" style={{ width: "120px" }} />
+              <span className="skeleton skeleton-line" style={{ width: "65%" }} />
+              <span className="skeleton skeleton-line skeleton-line-short" />
+            </li>
+          ))}
+        </ul>
+      )}
+
       <ul className="history-list">
-        {entries.map((entry) => (
+        {!loading && entries.map((entry) => (
           <li key={entry.id} className="history-item">
             <div className="history-time">
               {formatUtcTimestamp(entry.created_at)}

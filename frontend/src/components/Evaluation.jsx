@@ -85,6 +85,31 @@ export default function Evaluation({ repoId, repoName }) {
         </div>
       )}
 
+      {loading && !result && (
+        <div className="skeleton-group spaced-top" role="status" aria-label="Running evaluation">
+          <div className="stat-grid">
+            <div className="stat-tile">
+              <span className="skeleton skeleton-value" />
+              <span className="skeleton skeleton-label" />
+            </div>
+            <div className="stat-tile">
+              <span className="skeleton skeleton-value" />
+              <span className="skeleton skeleton-label" />
+            </div>
+            <div className="stat-tile">
+              <span className="skeleton skeleton-value" />
+              <span className="skeleton skeleton-label" />
+            </div>
+          </div>
+
+          <div className="info-card">
+            <span className="skeleton skeleton-line skeleton-line-title" />
+            <span className="skeleton skeleton-line" />
+            <span className="skeleton skeleton-line skeleton-line-short" />
+          </div>
+        </div>
+      )}
+
       {result && (
         <>
           <div className="stat-grid spaced-top">
