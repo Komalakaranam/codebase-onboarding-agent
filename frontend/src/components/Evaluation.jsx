@@ -102,6 +102,10 @@ export default function Evaluation({ repoId, repoName }) {
               <span className="skeleton skeleton-value" />
               <span className="skeleton skeleton-label" />
             </div>
+            <div className="stat-tile">
+              <span className="skeleton skeleton-value" />
+              <span className="skeleton skeleton-label" />
+            </div>
           </div>
 
           <div className="info-card">
@@ -120,8 +124,12 @@ export default function Evaluation({ repoId, repoName }) {
               <span className="stat-label">Test Questions</span>
             </div>
             <div className="stat-tile">
-              <span className="stat-value">{result.accuracy_percent}%</span>
-              <span className="stat-label">Accuracy</span>
+              <span className="stat-value">{result.top1_accuracy_percent}%</span>
+              <span className="stat-label">Top-1 Accuracy</span>
+            </div>
+            <div className="stat-tile">
+              <span className="stat-value">{result.top5_accuracy_percent}%</span>
+              <span className="stat-label">Top-5 Accuracy</span>
             </div>
             <div className="stat-tile">
               <span className="stat-value">{Math.round(result.avg_response_time_ms)}ms</span>
@@ -146,13 +154,23 @@ export default function Evaluation({ repoId, repoName }) {
             <BarChart
               data={[
                 {
-                  label: "Correct",
-                  value: result.results.filter((row) => row.correct).length,
+                  label: "Top-1 Correct",
+                  value: result.results.filter((row) => row.correct_top1).length,
                   color: "var(--color-success-text)",
                 },
                 {
-                  label: "Incorrect",
-                  value: result.results.filter((row) => !row.correct).length,
+                  label: "Top-1 Incorrect",
+                  value: result.results.filter((row) => !row.correct_top1).length,
+                  color: "var(--color-error-text)",
+                },
+                {
+                  label: "Top-5 Correct",
+                  value: result.results.filter((row) => row.correct_top5).length,
+                  color: "var(--color-success-text)",
+                },
+                {
+                  label: "Top-5 Incorrect",
+                  value: result.results.filter((row) => !row.correct_top5).length,
                   color: "var(--color-error-text)",
                 },
               ]}
@@ -166,7 +184,8 @@ export default function Evaluation({ repoId, repoName }) {
                   <th>Question</th>
                   <th>Expected</th>
                   <th>Retrieved</th>
-                  <th>Correct</th>
+                  <th>Top-1</th>
+                  <th>Top-5</th>
                   <th>Time</th>
                 </tr>
               </thead>
@@ -184,8 +203,11 @@ export default function Evaluation({ repoId, repoName }) {
                         </code>
                       ))}
                     </td>
-                    <td className={row.correct ? "eval-correct" : "eval-incorrect"}>
-                      {row.correct ? "Correct" : "Incorrect"}
+                    <td className={row.correct_top1 ? "eval-correct" : "eval-incorrect"}>
+                      {row.correct_top1 ? "Correct" : "Incorrect"}
+                    </td>
+                    <td className={row.correct_top5 ? "eval-correct" : "eval-incorrect"}>
+                      {row.correct_top5 ? "Correct" : "Incorrect"}
                     </td>
                     <td>{row.response_time_ms}ms</td>
                   </tr>

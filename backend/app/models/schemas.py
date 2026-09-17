@@ -172,7 +172,12 @@ class EvalQuestionResult(BaseModel):
     question: str
     expected_source: str
     retrieved_sources: list[str]
-    correct: bool
+    correct_top1: bool = Field(
+        ..., description="Whether expected_source matched retrieved_sources[0] specifically."
+    )
+    correct_top5: bool = Field(
+        ..., description="Whether expected_source matched anywhere in retrieved_sources."
+    )
     response_time_ms: int
 
 
@@ -182,7 +187,12 @@ class EvalResponse(BaseModel):
     repo_id: str
     results: list[EvalQuestionResult]
     total_questions: int
-    accuracy_percent: float
+    top1_accuracy_percent: float = Field(
+        ..., description="Percent of questions where the expected source was ranked first."
+    )
+    top5_accuracy_percent: float = Field(
+        ..., description="Percent of questions where the expected source appeared anywhere in the top-k."
+    )
     avg_response_time_ms: float
 
 

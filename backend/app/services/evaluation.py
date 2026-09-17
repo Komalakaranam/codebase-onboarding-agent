@@ -8,6 +8,12 @@ sources the pipeline retrieved. This measures *retrieval* quality
 directly: if the right file never surfaces in `sources`, the LLM had
 no chance of grounding its answer in it, regardless of how the answer
 reads.
+
+Two metrics are reported per question and in aggregate:
+  - top-1: the expected source was the single highest-ranked result
+    (the strict bar — what the pipeline would actually cite first).
+  - top-5: the expected source appeared anywhere in the top-k results
+    (the lenient bar — did retrieval have a chance at all).
 """
 
 from __future__ import annotations
@@ -58,20 +64,27 @@ def run_evaluation(repo_id: str, request: EvalRequest) -> EvalResponse:
                 question=item.question,
                 expected_source=item.expected_source,
                 retrieved_sources=retrieved_sources,
-                correct=_is_correct(item.expected_source, retrieved_sources),
+                # Top-1 reuses the same segment-matching logic, scoped to
+                # just the highest-ranked result — a strictly harder bar
+                # than "anywhere in the top-k".
+                correct_top1=_is_correct(item.expected_source, retrieved_sources[:1]),
+                correct_top5=_is_correct(item.expected_source, retrieved_sources),
                 response_time_ms=round(elapsed_ms),
             )
         )
 
     total = len(results)
-    correct_count = sum(1 for r in results if r.correct)
-    accuracy_percent = round((correct_count / total) * 100, 1) if total else 0.0
+    top1_count = sum(1 for r in results if r.correct_top1)
+    top5_count = sum(1 for r in results if r.correct_top5)
+    top1_accuracy_percent = round((top1_count / total) * 100, 1) if total else 0.0
+    top5_accuracy_percent = round((top5_count / total) * 100, 1) if total else 0.0
     avg_response_time_ms = round(sum(r.response_time_ms for r in results) / total, 1) if total else 0.0
 
     return EvalResponse(
         repo_id=repo_id,
         results=results,
         total_questions=total,
-        accuracy_percent=accuracy_percent,
+        top1_accuracy_percent=top1_accuracy_percent,
+        top5_accuracy_percent=top5_accuracy_percent,
         avg_response_time_ms=avg_response_time_ms,
     )
