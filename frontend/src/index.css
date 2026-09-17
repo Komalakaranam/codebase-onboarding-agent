@@ -27,6 +27,7 @@
   --text-sm: 0.8125rem;   /* 13px — labels, timestamps, muted text */
   --text-base: 0.9375rem; /* 15px — body */
   --text-lg: 1.1875rem;   /* 19px — headings */
+  --text-xl: 1.625rem;    /* 26px — welcome headline only, nowhere else */
 
   /* Modest corners */
   --radius-sm: 4px;
@@ -227,6 +228,27 @@ input:focus-visible {
 
 .card > p.muted {
   margin-top: 0;
+}
+
+/* ---------- Welcome (Index Repo landing view) ---------- */
+
+.welcome-intro {
+  margin-bottom: 12px;
+}
+
+.welcome-headline {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+  color: var(--color-text);
+}
+
+.welcome-tagline {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  margin: 0;
+  max-width: 520px;
 }
 
 /* ---------- Form controls ---------- */
