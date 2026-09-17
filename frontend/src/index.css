@@ -703,6 +703,67 @@ input:focus-visible {
   gap: 10px;
 }
 
+/* ---------- Evaluation ---------- */
+
+.eval-textarea {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.eval-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.eval-table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.eval-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.eval-table tr:last-child td {
+  border-bottom: none;
+}
+
+.eval-retrieved-path {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.eval-retrieved-path:last-child {
+  margin-bottom: 0;
+}
+
+.eval-correct {
+  color: var(--color-success-text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.eval-incorrect {
+  color: var(--color-error-text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 /* ---------- History ---------- */
 
 .history-header {

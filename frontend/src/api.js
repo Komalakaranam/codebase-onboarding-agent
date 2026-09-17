@@ -68,3 +68,11 @@ export function generateOnboardingGuide(repoId) {
     method: "POST",
   });
 }
+
+/** POST /repos/{repo_id}/evaluate — runs test questions through /ask and checks retrieval accuracy. */
+export function runEvaluation(repoId, questions) {
+  return request(`/repos/${encodeURIComponent(repoId)}/evaluate`, {
+    method: "POST",
+    body: JSON.stringify({ questions }),
+  });
+}
