@@ -2,6 +2,18 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { getOverview } from "../api";
 import { ErrorIcon } from "./StatusIcons";
+import DonutChart from "./DonutChart";
+
+// Fixed hue assignment by language identity (never by position/index), so
+// a language keeps the same color across repos with different language
+// mixes. Colors are the dataviz-skill-validated categorical series in
+// index.css. Anything outside this map falls back to the muted neutral.
+const LANGUAGE_COLORS = {
+  JavaScript: "var(--chart-series-1)",
+  Python: "var(--chart-series-2)",
+  TypeScript: "var(--chart-series-3)",
+};
+const FALLBACK_COLOR = "var(--color-muted)";
 
 /**
  * Default landing view after indexing. Files/chunks/languages come
@@ -68,6 +80,35 @@ export default function Overview({ repoId, repoName }) {
               <span className="stat-label">Languages</span>
             </div>
           </div>
+
+          {Object.keys(data.language_breakdown).length > 0 && (
+            <div className="info-card">
+              <div className="info-card-title">Language Distribution</div>
+              <div className="chart-card">
+                <DonutChart
+                  data={Object.entries(data.language_breakdown).map(([label, value]) => ({
+                    label,
+                    value,
+                    color: LANGUAGE_COLORS[label] || FALLBACK_COLOR,
+                  }))}
+                />
+                <div className="chart-legend">
+                  {Object.entries(data.language_breakdown).map(([label, value]) => (
+                    <div className="chart-legend-row" key={label}>
+                      <span
+                        className="chart-legend-swatch"
+                        style={{ background: LANGUAGE_COLORS[label] || FALLBACK_COLOR }}
+                      />
+                      <span>{label}</span>
+                      <span className="chart-legend-value">
+                        {Math.round((value / data.files_scanned) * 100)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="info-card">
             <div className="info-card-title">Project Info</div>

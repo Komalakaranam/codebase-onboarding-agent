@@ -131,6 +131,9 @@ class RepoOverviewResponse(BaseModel):
     files_scanned: int
     chunks_found: int
     languages: list[str]
+    language_breakdown: dict[str, int] = Field(
+        ..., description="File count per detected language, for the language distribution chart."
+    )
     description: str
 
 

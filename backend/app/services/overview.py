@@ -44,8 +44,11 @@ def _local_repo_path(repo_id: str) -> Path:
     return settings.data_dir / repo_id
 
 
-def _detect_languages(local_path: Path) -> list[str]:
-    found = set()
+def _language_breakdown(local_path: Path) -> dict[str, int]:
+    """File count per detected language — one pass covers both the
+    language list and files_scanned (their sum), since LANGUAGE_BY_EXTENSION
+    covers exactly the same extensions as settings.supported_extensions."""
+    counts: dict[str, int] = {}
     for path in local_path.rglob("*"):
         if not path.is_file():
             continue
@@ -53,20 +56,8 @@ def _detect_languages(local_path: Path) -> list[str]:
             continue
         language = LANGUAGE_BY_EXTENSION.get(path.suffix.lower())
         if language:
-            found.add(language)
-    return sorted(found)
-
-
-def _count_source_files(local_path: Path) -> int:
-    count = 0
-    for path in local_path.rglob("*"):
-        if not path.is_file():
-            continue
-        if any(skip in path.parts for skip in settings.skip_dirs):
-            continue
-        if path.suffix.lower() in settings.supported_extensions:
-            count += 1
-    return count
+            counts[language] = counts.get(language, 0) + 1
+    return counts
 
 
 def _find_readme(local_path: Path) -> str | None:
@@ -158,10 +149,13 @@ def get_repo_overview(repo_id: str) -> RepoOverviewResponse:
             "(was backend/data/ cleared?). Re-index to restore it."
         )
 
+    language_breakdown = _language_breakdown(local_path)
+
     return RepoOverviewResponse(
         repo_id=repo_id,
-        files_scanned=_count_source_files(local_path),
+        files_scanned=sum(language_breakdown.values()),
         chunks_found=chunks_found,
-        languages=_detect_languages(local_path),
+        languages=sorted(language_breakdown.keys()),
+        language_breakdown=language_breakdown,
         description=_generate_description(repo_id, local_path),
     )
