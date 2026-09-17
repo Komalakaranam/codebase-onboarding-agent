@@ -124,6 +124,16 @@ class ChatHistoryResponse(BaseModel):
     history: list[ChatHistoryEntry]
 
 
+class RepoOverviewResponse(BaseModel):
+    """Returned by GET /repos/{repo_id}/overview."""
+
+    repo_id: str
+    files_scanned: int
+    chunks_found: int
+    languages: list[str]
+    description: str
+
+
 class HealthResponse(BaseModel):
     status: str
     version: str

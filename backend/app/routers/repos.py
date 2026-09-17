@@ -17,10 +17,13 @@ from app.models.schemas import (
     IndexRepoResponse,
     IndexStatus,
     ParsedChunkPreview,
+    RepoOverviewResponse,
 )
 from app.services.embeddings import embed_chunks
 from app.services.github import GitHubCloneError, clone_github_repo
+from app.services.overview import get_repo_overview
 from app.services.parser import parse_repository
+from app.services.qa import RepoNotIndexedError
 from app.services.vector_store import get_stored_chunk_count, store_chunks
 
 router = APIRouter(prefix="/repos", tags=["repos"])
@@ -122,3 +125,21 @@ def get_repo_summary(repo_id: str) -> dict:
         "embedding_model": settings.embedding_model_name,
         "vector_store": "chromadb",
     }
+
+
+@router.get("/{repo_id}/overview", response_model=RepoOverviewResponse)
+def get_repo_overview_endpoint(repo_id: str) -> RepoOverviewResponse:
+    """
+    Files scanned, chunks found, and detected languages come straight
+    from disk/ChromaDB; the description is a short Groq-generated
+    summary grounded in the repo's README (or a few retrieved chunks
+    if there's no README).
+    """
+    try:
+        return get_repo_overview(repo_id)
+    except RepoNotIndexedError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=502, detail=f"Groq request failed: {exc}") from exc

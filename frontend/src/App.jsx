@@ -30,7 +30,7 @@ export default function App() {
           {activeTab === "settings" && <RepoInput onIndexed={handleIndexed} />}
 
           {activeTab === "overview" && repo && (
-            <Overview key={repo.repoId} repoName={repo.repoName} />
+            <Overview key={repo.repoId} repoId={repo.repoId} repoName={repo.repoName} />
           )}
 
           {activeTab === "chat" && repo && (
