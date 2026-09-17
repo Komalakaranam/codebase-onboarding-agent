@@ -10,6 +10,7 @@ chunks retrieved from ChromaDB, and asks Groq for 2-3 plain sentences.
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from app.config import settings
@@ -35,6 +36,8 @@ DESCRIPTION_SYSTEM_PROMPT = (
 )
 
 README_MAX_CHARS = 4000
+
+logger = logging.getLogger(__name__)
 
 
 def _local_repo_path(repo_id: str) -> Path:
@@ -114,9 +117,31 @@ def _generate_description(repo_id: str, local_path: Path) -> str:
             },
         ],
         temperature=0.3,
-        max_tokens=200,
+        # Some Groq-hosted models (e.g. openai/gpt-oss-*) are reasoning
+        # models whose internal chain-of-thought also counts against
+        # max_tokens. A tight budget here can let reasoning consume the
+        # whole thing, finishing with finish_reason="length" and an empty
+        # message.content — no error, just nothing to show. 500 leaves
+        # room for that reasoning plus the actual 2-3 sentence summary.
+        max_tokens=500,
     )
-    return (completion.choices[0].message.content or "").strip()
+    description = (completion.choices[0].message.content or "").strip()
+    if not description:
+        finish_reason = getattr(completion.choices[0], "finish_reason", "unknown")
+        logger.warning(
+            "Groq returned an empty description for repo_id=%s "
+            "(model=%s, finish_reason=%s). Full completion: %r",
+            repo_id,
+            settings.groq_model_name,
+            finish_reason,
+            completion,
+        )
+        return (
+            "The model didn't return a summary for this repo (it may have run "
+            "out of budget reasoning about it). Try again, or check the "
+            "backend logs for the raw completion."
+        )
+    return description
 
 
 def get_repo_overview(repo_id: str) -> RepoOverviewResponse:
