@@ -11,6 +11,7 @@ Then open http://127.0.0.1:8000/docs for interactive API documentation.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.config import settings
 from app.models.schemas import HealthResponse
 from app.routers.evaluation import router as evaluation_router
 from app.routers.onboarding import router as onboarding_router
@@ -26,12 +27,17 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# Allow the React frontend (Vite default port) to call this API
+# Local Vite dev server is always allowed; a deployed frontend (e.g. a
+# Vercel URL) is added via ALLOWED_ORIGINS (comma-separated) so it never
+# needs to be hardcoded here.
+_extra_origins = [origin.strip() for origin in settings.allowed_origins.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        *_extra_origins,
     ],
     allow_credentials=True,
     allow_methods=["*"],
