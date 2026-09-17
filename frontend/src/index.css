@@ -308,6 +308,58 @@ input:focus-visible {
   gap: 8px;
 }
 
+/* ---------- Indexing progress checklist ---------- */
+
+.step-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.step-item.step-active,
+.step-item.step-done {
+  color: var(--color-text);
+}
+
+.step-item.step-error {
+  color: var(--color-error-text);
+}
+
+.step-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.step-icon .spinner {
+  margin-top: 0;
+}
+
+.step-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-strong);
+}
+
+.step-item.step-done .step-icon {
+  color: var(--color-accent);
+}
+
 .spinner {
   width: 14px;
   height: 14px;

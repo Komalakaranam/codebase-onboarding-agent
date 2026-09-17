@@ -1,17 +1,42 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { indexRepo } from "../api";
 import { CheckIcon, ErrorIcon } from "./StatusIcons";
+import IndexingSteps from "./IndexingSteps";
+
+const INDEXING_STEPS = [
+  { id: "clone", label: "Cloning repository" },
+  { id: "parse", label: "Parsing code files" },
+  { id: "embed", label: "Generating embeddings" },
+  { id: "store", label: "Storing in vector database" },
+];
+
+const IDLE_STATUSES = Object.fromEntries(INDEXING_STEPS.map((s) => [s.id, "pending"]));
+
+/** Which step actually failed, inferred from the backend's own error message
+ *  (see backend/app/routers/repos.py — each stage raises a distinct wording). */
+function classifyErrorStep(message) {
+  if (message.includes("parsing failed")) return "parse";
+  if (message.includes("embedding/storage failed")) return "embed";
+  return "clone";
+}
 
 /**
  * Step 1 of the UI: paste a GitHub URL, trigger POST /repos/index,
  * and show progress → success (or error). On success, the parent App
- * gets the indexed repo's info via onIndexed() and switches to Chat.
+ * gets the indexed repo's info via onIndexed() and switches to Overview.
  */
 export default function RepoInput({ onIndexed }) {
   const [repoUrl, setRepoUrl] = useState("");
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [result, setResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [stepStatuses, setStepStatuses] = useState(IDLE_STATUSES);
+  const timers = useRef([]);
+
+  function clearTimers() {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -20,12 +45,33 @@ export default function RepoInput({ onIndexed }) {
 
     setStatus("loading");
     setErrorMessage("");
+    setStepStatuses({ ...IDLE_STATUSES, clone: "active" });
+
+    timers.current.push(
+      setTimeout(() => setStepStatuses((s) => ({ ...s, clone: "done", parse: "active" })), 900),
+      setTimeout(() => setStepStatuses((s) => ({ ...s, parse: "done", embed: "active" })), 1800)
+    );
+
     try {
       const data = await indexRepo(trimmed);
+      clearTimers();
+      setStepStatuses({ clone: "done", parse: "done", embed: "done", store: "done" });
       setResult(data);
       setStatus("success");
     } catch (err) {
-      setErrorMessage(err.message || "Failed to index repository.");
+      clearTimers();
+      const message = err.message || "Failed to index repository.";
+      const failedStep = classifyErrorStep(message);
+      const failedIndex = INDEXING_STEPS.findIndex((s) => s.id === failedStep);
+      setStepStatuses(
+        Object.fromEntries(
+          INDEXING_STEPS.map((s, i) => [
+            s.id,
+            i < failedIndex ? "done" : i === failedIndex ? "error" : "pending",
+          ])
+        )
+      );
+      setErrorMessage(message);
       setStatus("error");
     }
   }
@@ -57,12 +103,8 @@ export default function RepoInput({ onIndexed }) {
         </button>
       </form>
 
-      {status === "loading" && (
-        <div className="loading-note">
-          <span className="spinner" />
-          Cloning the repo, parsing source files, and generating
-          embeddings — this can take a while for larger repositories.
-        </div>
+      {(status === "loading" || status === "error") && (
+        <IndexingSteps steps={INDEXING_STEPS} statuses={stepStatuses} />
       )}
 
       {status === "error" && (
