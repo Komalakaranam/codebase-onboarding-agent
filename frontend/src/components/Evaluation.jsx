@@ -49,7 +49,9 @@ export default function Evaluation({ repoId, repoName }) {
       <h2>Evaluation</h2>
       <p className="muted">
         Test retrieval accuracy for {repoName}. One test per line: a question,
-        then <code>|</code>, then a substring of the file it should retrieve.
+        then <code>|</code>, then the file path it should retrieve (e.g.{" "}
+        <code>services/qa.py</code> — include enough of the path to
+        disambiguate same-named files in different folders).
       </p>
 
       <textarea

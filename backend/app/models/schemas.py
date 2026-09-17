@@ -150,7 +150,15 @@ class EvalQuestion(BaseModel):
 
     question: str = Field(..., min_length=3)
     expected_source: str = Field(
-        ..., min_length=1, description="Substring to look for in the retrieved file paths."
+        ...,
+        min_length=1,
+        description=(
+            "File path (or trailing path segments, e.g. 'services/qa.py') "
+            "expected among the retrieved sources. Matched on whole path "
+            "segments, not raw substring — a bare filename like 'qa.py' "
+            "still matches any directory containing that file, so include "
+            "enough of the path to disambiguate same-named files."
+        ),
     )
 
 

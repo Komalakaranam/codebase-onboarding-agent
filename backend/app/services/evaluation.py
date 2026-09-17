@@ -13,13 +13,35 @@ reads.
 from __future__ import annotations
 
 import time
+from pathlib import PurePosixPath
 
 from app.models.schemas import EvalQuestionResult, EvalRequest, EvalResponse
 from app.services.qa import answer_question
 
 
 def _is_correct(expected_source: str, retrieved_sources: list[str]) -> bool:
-    return any(expected_source in path for path in retrieved_sources)
+    """
+    True if expected_source matches a retrieved path exactly, or as a
+    path-segment-aligned suffix — e.g. "qa.py" matches ".../services/qa.py"
+    but not ".../services/fastqa.py", and "services/qa.py" matches only
+    that directory, not ".../routers/qa.py".
+
+    Plain substring containment (the old `expected_source in path` check)
+    let unrelated paths match on overlapping characters alone — e.g.
+    "history.py" would also match a hypothetical "chat_history.py", and a
+    bare "qa.py" couldn't distinguish "routers/qa.py" from "services/qa.py"
+    beyond coincidence. Comparing whole path segments fixes the character-
+    overlap case; a same-named file in two directories is still only
+    disambiguated by giving enough of the path (e.g. "services/qa.py").
+    """
+    expected_parts = PurePosixPath(expected_source.strip("/")).parts
+    if not expected_parts:
+        return False
+    for path in retrieved_sources:
+        path_parts = PurePosixPath(path).parts
+        if len(expected_parts) <= len(path_parts) and path_parts[-len(expected_parts):] == expected_parts:
+            return True
+    return False
 
 
 def run_evaluation(repo_id: str, request: EvalRequest) -> EvalResponse:
