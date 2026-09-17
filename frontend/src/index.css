@@ -55,6 +55,42 @@
   --sidebar-active-bg: rgba(37, 99, 235, 0.18);
 
   --content-max-width: 920px;
+
+  color-scheme: light;
+}
+
+/* Dark theme — same tokens, dark-tuned values. Toggled via a
+   data-theme attribute on <html> (see components/ThemeToggle.jsx),
+   not prefers-color-scheme, so it always matches the user's explicit
+   choice rather than their OS setting. Colors picked and validated
+   with the dataviz skill's palette validator against this surface. */
+:root[data-theme="dark"] {
+  --color-bg: #0f1115;
+  --color-surface: #17191f;
+  --color-border: #2a2d35;
+  --color-border-strong: #3f434e;
+  --color-text: #e4e4e7;
+  --color-text-secondary: #a1a1aa;
+  --color-muted: #71717a;
+
+  --color-accent: #60a5fa;
+  --color-accent-hover: #3b82f6;
+  --color-accent-contrast: #0f172a;
+  --color-accent-subtle: #16233a;
+  --color-accent-subtle-border: #1e3a5f;
+
+  --color-success-bg: #0f2818;
+  --color-success-border: #14532d;
+  --color-success-text: #4ade80;
+  --color-error-bg: #2a1212;
+  --color-error-border: #7f1d1d;
+  --color-error-text: #f87171;
+
+  --chart-series-1: #3b82f6;
+  --chart-series-2: #d97706;
+  --chart-series-3: #ec4899;
+
+  color-scheme: dark;
 }
 
 * {
@@ -183,6 +219,32 @@ input:focus-visible {
   margin-top: auto;
   padding: 12px 8px 0;
   border-top: 1px solid var(--sidebar-border);
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 9px;
+  margin-bottom: 12px;
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--sidebar-text);
+  font-size: var(--text-sm);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.theme-toggle svg {
+  flex-shrink: 0;
 }
 
 .sidebar-footer-label {
@@ -1101,6 +1163,24 @@ input:focus-visible {
   }
 
   .sidebar-footer {
+    margin-top: 0;
+    padding: 0;
+    border-top: none;
+    flex-shrink: 0;
+  }
+
+  .sidebar-footer-info {
+    display: none;
+  }
+
+  .theme-toggle {
+    width: auto;
+    margin-bottom: 0;
+    padding: 8px;
+    border-radius: 50%;
+  }
+
+  .theme-toggle span {
     display: none;
   }
 

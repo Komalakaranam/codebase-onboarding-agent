@@ -7,6 +7,7 @@ import {
   OnboardingIcon,
   EvaluationIcon,
 } from "./NavIcons";
+import ThemeToggle from "./ThemeToggle";
 
 const NAV_ITEMS = [
   { id: "index", label: "Index Repo", Icon: IndexIcon, requiresRepo: false },
@@ -40,16 +41,20 @@ export default function Sidebar({ activeTab, onSelectTab, repo }) {
       </nav>
 
       <div className="sidebar-footer">
-        {repo ? (
-          <>
-            <div className="sidebar-footer-label">Current repo</div>
-            <div className="sidebar-footer-repo" title={repo.repoName}>
-              {repo.repoName}
-            </div>
-          </>
-        ) : (
-          <div className="sidebar-footer-label">No repo indexed</div>
-        )}
+        <ThemeToggle />
+
+        <div className="sidebar-footer-info">
+          {repo ? (
+            <>
+              <div className="sidebar-footer-label">Current repo</div>
+              <div className="sidebar-footer-repo" title={repo.repoName}>
+                {repo.repoName}
+              </div>
+            </>
+          ) : (
+            <div className="sidebar-footer-label">No repo indexed</div>
+          )}
+        </div>
       </div>
     </aside>
   );
