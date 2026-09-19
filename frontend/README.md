@@ -40,3 +40,25 @@ even though the backend itself works fine (e.g. via `/docs` or curl).
 npm run build   # outputs to dist/
 npm run lint    # oxlint
 ```
+
+## Deployment (e.g. Vercel)
+
+Set `VITE_API_BASE_URL` to the deployed backend's URL as an environment
+variable on the hosting platform — nothing in the code needs to change,
+`src/api.js` already reads it. On Vercel: Project → Settings →
+Environment Variables → add `VITE_API_BASE_URL` (e.g.
+`https://codebase-onboarding-agent-ecc8.onrender.com`) for the
+Production environment, then redeploy.
+
+That last part matters: Vite inlines `import.meta.env.VITE_*` values
+into the built JS at **build time**, not read at runtime in the
+browser. Saving the env var in Vercel's dashboard doesn't retroactively
+change an already-built deployment — it only takes effect on the next
+build, so trigger a redeploy after adding or changing it.
+
+The backend's CORS config is the other half of this: it only accepts
+requests from origins listed in its `ALLOWED_ORIGINS` env var (see
+`backend/.env.example`). Once you have your Vercel URL, set it there
+too (on Render's dashboard for this service) — otherwise the browser
+will block every request with a CORS error even though
+`VITE_API_BASE_URL` is pointed at the right place.
