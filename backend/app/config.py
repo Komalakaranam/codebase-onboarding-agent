@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     groq_model_name: str = "openai/gpt-oss-20b"
     qa_top_k: int = 5
 
+    # Extra CORS origins allowed to call this API, comma-separated (e.g. a
+    # deployed Vercel frontend URL). Localhost is always allowed separately
+    # in main.py so local dev keeps working regardless of this setting.
+    allowed_origins: str = ""
+
     # File extensions we index in step 1
     supported_extensions: tuple[str, ...] = (".py", ".js", ".jsx", ".ts", ".tsx")
 

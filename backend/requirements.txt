@@ -13,10 +13,7 @@ python-dotenv==1.0.1
 # Database (used in later steps)
 sqlalchemy==2.0.36
 
-# AI / RAG (used in later steps — listed now so one install works)
+# AI / RAG
 chromadb==0.5.23
 sentence-transformers==3.3.1
 groq==0.13.1
-
-# HTTP client (for health checks / future use)
-httpx==0.28.1
